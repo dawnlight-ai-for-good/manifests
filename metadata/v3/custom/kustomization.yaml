@@ -6,3 +6,5 @@ resources:
 - ../../overlays/istio/virtual-service-metadata-grpc.yaml
 configurations:
 - ../params.yaml
+patchesStrategicMerge:
+- deployment-patch.yaml

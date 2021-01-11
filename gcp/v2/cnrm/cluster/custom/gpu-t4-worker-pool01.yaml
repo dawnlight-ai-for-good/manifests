@@ -21,7 +21,7 @@ spec:
   initialNodeCount: 1
   autoscaling:
     minNodeCount: 1
-    maxNodeCount: 1
+    maxNodeCount: gpu-t4-worker-nodepool-max-size # {"$kpt-set":"gpu-t4-worker-nodepool-max-size"}
   location: us-east1-d # {"$kpt-set":"location"}
   nodeConfig:
     guestAccelerator:

@@ -1,0 +1,38 @@
+bases:
+- ../../../base
+
+resources:
+- ../../../overlays/cert-manager/certificate.yaml
+
+patchesStrategicMerge:
+- ../../../overlays/cert-manager/mutating-webhook-configuration.yaml
+- ../../../overlays/cert-manager/deployment.yaml
+- deployment-patch.yaml
+
+configMapGenerator:
+- name: admission-webhook-parameters
+  behavior: merge
+  envs:
+  - ../../../overlays/cert-manager/params.env
+generatorOptions:
+  disableNameSuffixHash: true
+
+vars:
+- name: podDefaultsIssuer
+  objref:
+    kind: ConfigMap
+    name: admission-webhook-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.issuer
+- name: podDefaultsCertName
+  objref:
+      kind: Certificate
+      group: cert-manager.io
+      version: v1alpha2
+      name: admission-webhook-cert
+  fieldref:
+    fieldpath: metadata.name
+
+configurations:
+- ../../../overlays/cert-manager/params.yaml
