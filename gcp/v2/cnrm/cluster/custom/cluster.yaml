@@ -22,7 +22,7 @@ metadata:
     mesh_id: "project-id_us-east1-d_name" # {"$kpt-set":"mesh-id"}
   name: name # {"$kpt-set":"name"}
 spec:
-  initialNodeCount: 2
+  initialNodeCount: default-nodepool-size # {"$kpt-set":"default-nodepool-size"}
   clusterAutoscaling:
     enabled: true
     autoProvisioningDefaults:
@@ -38,7 +38,7 @@ spec:
     - resourceType: memory
       maximum: 2000
     - resourceType: nvidia-tesla-t4
-      maximum: 1
+      maximum: gpu-nvidia-tesla-t4-limit # {"$kpt-set":"gpu-nvidia-tesla-t4-limit"}
   releaseChannel:
     # Per https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/194
     # use upper case for the channels

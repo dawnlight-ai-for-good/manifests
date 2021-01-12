@@ -1,0 +1,190 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline
+spec:
+  template:
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
+      containers:
+      - name: ml-pipeline-api-server
+        envFrom:
+          - configMapRef:
+              name: pipeline-api-server-config
+        env:
+          - name: KUBEFLOW_USERID_HEADER
+            valueFrom:
+              configMapKeyRef:
+                name: kubeflow-config
+                key: userid-header
+          - name: KUBEFLOW_USERID_PREFIX
+            valueFrom:
+              configMapKeyRef:
+                name: kubeflow-config
+                key: userid-prefix
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-ui
+spec:
+  template:
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
+      volumes:
+      - name: config-volume
+        configMap:
+          name: ml-pipeline-ui-configmap
+      containers:
+      - name: ml-pipeline-ui
+        env:
+        - name: VIEWER_TENSORBOARD_POD_TEMPLATE_SPEC_PATH
+          value: /etc/config/viewer-pod-template.json
+        - name: DEPLOYMENT
+          value: KUBEFLOW
+        - name: ARTIFACTS_SERVICE_PROXY_NAME
+          value: ml-pipeline-ui-artifact
+        - name: ARTIFACTS_SERVICE_PROXY_PORT
+          value: '80'
+        - name: ARTIFACTS_SERVICE_PROXY_ENABLED
+          value: 'true'
+        - name: ENABLE_AUTHZ
+          value: 'true'
+        - name: KUBEFLOW_USERID_HEADER
+          valueFrom:
+            configMapKeyRef:
+              name: kubeflow-config
+              key: userid-header
+        - name: KUBEFLOW_USERID_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              name: kubeflow-config
+              key: userid-prefix
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/config
+          readOnly: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profile-controller
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
+      containers:
+      - name: profile-controller
+        image: python:3.7
+        command: ["python", "/hooks/sync.py"]
+        envFrom:
+        - configMapRef:
+            name: profile-controller-env
+        env:
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mlpipeline-minio-artifact
+              key: accesskey
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mlpipeline-minio-artifact
+              key: secretkey
+        volumeMounts:
+        - name: hooks
+          mountPath: /hooks
+        ports:
+        - containerPort: 80
+      volumes:
+      - name: hooks
+        configMap:
+          name: profile-controller-code
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-scheduledworkflow
+spec:
+  template:
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
+      containers:
+      - name: ml-pipeline-scheduledworkflow
+        env:
+        - name: NAMESPACE
+          value: '' # Empty namespace let viewer controller watch all namespaces
+          valueFrom: null # HACK: https://github.com/kubernetes-sigs/kustomize/issues/2606
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-viewer-crd
+spec:
+  template:
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
+      containers:
+      - name: ml-pipeline-viewer-crd
+        env:
+        - name: NAMESPACE
+          value: '' # Empty namespace let viewer controller watch all namespaces
+          valueFrom: null
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-persistenceagent
+spec:
+  template:
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
+      containers:
+      - name: ml-pipeline-persistenceagent
+        env:
+        - name: NAMESPACE
+          value: ''
+          valueFrom: null
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadata-writer
+spec:
+  template:
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
+      containers:
+      - name: main
+        env:
+        - name: NAMESPACE_TO_WATCH
+          value: ''
+          valueFrom: null
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cache-server
+spec:
+  template:
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
+      containers:
+      - name: server
+        env:
+          - name: NAMESPACE_TO_WATCH
+            value: ''
+            valueFrom: null

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+  labels:
+    component: server
+spec:
+  template:
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui
+  labels:
+    app: metadata-ui
+spec:
+  template:
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-deployment
+  labels:
+    component: grpc-server
+spec:
+  template:
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy-deployment
+  labels:
+    component: envoy
+spec:
+  template:
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
