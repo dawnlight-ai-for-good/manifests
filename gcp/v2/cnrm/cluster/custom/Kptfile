@@ -890,3 +890,13 @@ openAPI:
           values:
           - marker: ${name}
             ref: '#/definitions/io.k8s.cli.setters.name'
+    io.k8s.cli.setters.node-pool-gpu01.instance-type:
+      x-k8s-cli:
+        setter:
+          name: node-pool-gpu01.instance-type
+          value: node-pool-gpu01.instance-type
+    io.k8s.cli.setters.node-pool-cpu01.instance-type:
+      x-k8s-cli:
+        setter:
+          name: node-pool-cpu01.instance-type
+          value: node-pool-cpu01.instance-type

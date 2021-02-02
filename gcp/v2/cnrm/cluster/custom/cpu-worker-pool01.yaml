@@ -24,7 +24,7 @@ spec:
     maxNodeCount: cpu-worker-nodepool-max-size # {"$kpt-set":"cpu-worker-nodepool-max-size"}
   location: us-east1-d # {"$kpt-set":"location"}
   nodeConfig:
-    machineType: n1-standard-2
+    machineType: node-pool-cpu01.instance-type # {"$kpt-set":"node-pool-cpu01.instance-type"}
     metadata:
       disable-legacy-endpoints: "true"
     serviceAccountRef:

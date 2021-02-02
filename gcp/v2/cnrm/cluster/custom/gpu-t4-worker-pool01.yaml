@@ -25,9 +25,9 @@ spec:
   location: us-east1-d # {"$kpt-set":"location"}
   nodeConfig:
     guestAccelerator:
-    - count: 1
+    - count: node-pool-gpu01.gpu-count-per-node # {"$kpt-set":"node-pool-gpu01.gpu-count-per-node"}
       type: nvidia-tesla-t4
-    machineType: n1-standard-2
+    machineType: node-pool-gpu01.instance-type # {"$kpt-set":"node-pool-gpu01.instance-type"}
     metadata:
       disable-legacy-endpoints: "true"
     serviceAccountRef:
