@@ -900,3 +900,13 @@ openAPI:
         setter:
           name: node-pool-cpu01.instance-type
           value: node-pool-cpu01.instance-type
+    io.k8s.cli.setters.cluster-version:
+      x-k8s-cli:
+        setter:
+          name: cluster-version
+          value: cluster-version
+    io.k8s.cli.setters.cluster-release-channel:
+      x-k8s-cli:
+        setter:
+          name: cluster-release-channel
+          value: cluster-release-channel
