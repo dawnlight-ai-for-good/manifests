@@ -35,5 +35,7 @@ spec:
       name: name-vm # {"$kpt-set":"name-vm"}
     workloadMetadataConfig:
       nodeMetadata: GKE_METADATA_SERVER
+    oauthScopes:
+    - https://www.googleapis.com/auth/cloud-platform
   clusterRef:
     name: name # {"$kpt-set":"name"}
