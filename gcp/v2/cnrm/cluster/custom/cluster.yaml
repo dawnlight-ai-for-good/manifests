@@ -22,6 +22,8 @@ metadata:
     mesh_id: "project-id_us-east1-d_name" # {"$kpt-set":"mesh-id"}
   name: name # {"$kpt-set":"name"}
 spec:
+  minMasterVersion: cluster-version # {"$kpt-set":"cluster-version"}
+  nodeVersion: cluster-version # {"$kpt-set":"cluster-version"}
   initialNodeCount: default-nodepool-size # {"$kpt-set":"default-nodepool-size"}
   clusterAutoscaling:
     enabled: true
@@ -42,7 +44,7 @@ spec:
   releaseChannel:
     # Per https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/194
     # use upper case for the channels
-    channel: REGULAR
+    channel: cluster-release-channel # {"$kpt-set":"cluster-release-channel"}
   location: us-east1-d # {"$kpt-set":"location"}
   workloadIdentityConfig:
     identityNamespace: project-id.svc.id.goog # {"$kpt-set":"identity-ns"}

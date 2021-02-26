@@ -16,8 +16,9 @@ apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerNodePool
 metadata:
   clusterName: "project-id/us-east1-d/name" # {"$kpt-set":"cluster-name"}
-  name: name-gpu-t4-worker-pool01 # {"$kpt-set":"node-pool-gpu01"}
+  name: gpu-t4-worker-pool01
 spec:
+  version: cluster-version # {"$kpt-set":"cluster-version"}
   initialNodeCount: 1
   autoscaling:
     minNodeCount: 1
@@ -34,5 +35,7 @@ spec:
       name: name-vm # {"$kpt-set":"name-vm"}
     workloadMetadataConfig:
       nodeMetadata: GKE_METADATA_SERVER
+    oauthScopes:
+    - https://www.googleapis.com/auth/cloud-platform
   clusterRef:
     name: name # {"$kpt-set":"name"}
